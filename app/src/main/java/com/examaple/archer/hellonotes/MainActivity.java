@@ -1,6 +1,8 @@
 package com.examaple.archer.hellonotes;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,6 +14,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button textButton,imgButton,videoButton;
     private ListView listView;
     private Intent intent;
+    private MyAdapter adapter;
+    private NotesDB notesDB;
+    private SQLiteDatabase dbReader;
 
 
     @Override
@@ -22,6 +27,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        NotesDB notesDB = new NotesDB(this);
 //        dbWriter= notesDB.getWritableDatabase();
 //        addDB();
+
+
+
     }
 
     //初始化组件
@@ -34,7 +42,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         textButton.setOnClickListener(this);
         imgButton.setOnClickListener(this);
         videoButton.setOnClickListener(this);
-
+        notesDB=new NotesDB(this);
+        dbReader=notesDB.getReadableDatabase();
 
     }
 
@@ -56,9 +65,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtra("flag","3");
                 startActivity(intent);
                 break;
-
-            default:
-
 
         }
     }
@@ -84,4 +90,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     */
 
+    public void selectDB(){
+        Cursor cursor=dbReader.query(NotesDB.TABLE_NAME,null,null,null,null,null,null);
+        adapter=new MyAdapter(this,cursor);
+        listView.setAdapter(adapter);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        selectDB();
+    }
 }
