@@ -28,7 +28,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/text"
+        android:id="@+id/text123"
         android:text="文字"
         android:layout_weight="1"/>
 

@@ -1,26 +1,70 @@
 package com.examaple.archer.hellonotes;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-public class MainActivity extends AppCompatActivity {
+    private Button textButton,imgButton,videoButton;
+    private ListView listView;
+    private Intent intent;
 
-     private  NotesDB notesDB;
-    private SQLiteDatabase dbWriter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-         notesDB= new NotesDB(this);
-        dbWriter= notesDB.getWritableDatabase();
-        addDB();
+        initView();
+//        NotesDB notesDB = new NotesDB(this);
+//        dbWriter= notesDB.getWritableDatabase();
+//        addDB();
     }
 
+    //初始化组件
+    public void initView(){
+        listView= (ListView) findViewById(R.id.list);
+        textButton= (Button) findViewById(R.id.text123);
+        imgButton= (Button) findViewById(R.id.img);
+        videoButton= (Button) findViewById(R.id.video);
+
+        textButton.setOnClickListener(this);
+        imgButton.setOnClickListener(this);
+        videoButton.setOnClickListener(this);
+
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        intent=new Intent(this,AddContent.class);
+        switch (v.getId()){
+            case R.id.text123:
+               intent.putExtra("flag","1");
+                startActivity(intent);
+                break;
+
+            case R.id.img:
+                intent.putExtra("flag","2");
+                startActivity(intent);
+                break;
+
+            case R.id.video:
+                intent.putExtra("flag","3");
+                startActivity(intent);
+                break;
+
+            default:
+
+
+        }
+    }
+
+    //测试能否注入数据库
+/*
     public void addDB(){
         ContentValues contentValues=new ContentValues();
         contentValues.put(NotesDB.CONTENT,"Hello");
@@ -38,5 +82,6 @@ public class MainActivity extends AppCompatActivity {
         return format.format(curDate);
 
     }
+    */
 
 }
