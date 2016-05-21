@@ -2,6 +2,10 @@ package com.examaple.archer.hellonotes;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,12 +56,44 @@ public class MyAdapter  extends BaseAdapter{
         ImageView  imageView1= (ImageView) layout.findViewById(R.id.list_video);
 
         cursor.moveToPosition(position);
-         String content=cursor.getString(cursor.getColumnIndex("content"));
+        String content=cursor.getString(cursor.getColumnIndex("content"));
         String time=cursor.getString(cursor.getColumnIndex("time"));
+        String url=cursor.getString(cursor.getColumnIndex("path"));
+
         contenttv.setText(content);
         timetv.setText(time);
+        imageView.setImageBitmap(getImageThumbnail(url,200,200));
+
+
 
 
         return layout;
+    }
+
+    //获取缩略图
+
+    public Bitmap getImageThumbnail(String uri,int width,int height){
+        Bitmap bitmap=null;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        bitmap=BitmapFactory.decodeFile(uri,options);
+        options.inJustDecodeBounds = false;
+        int beWidth = options.outWidth / width;
+        int beHeight = options.outHeight / height;
+        int be = 1;
+        if (beWidth < beHeight) {
+            be = beWidth;
+        } else {
+            be = beHeight;
+        }
+        if (be <= 0) {
+            be = 1;
+        }
+        options.inSampleSize = be;
+        bitmap = BitmapFactory.decodeFile(uri, options);
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
+                ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        return bitmap;
     }
 }

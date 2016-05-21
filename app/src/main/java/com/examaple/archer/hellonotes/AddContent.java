@@ -1,9 +1,15 @@
 package com.examaple.archer.hellonotes;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.VideoView;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -28,6 +35,7 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
 
     private NotesDB notesDB;
     private SQLiteDatabase dbWriter;
+    private File phoneFile;
 
 
 
@@ -49,8 +57,37 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         notesDB=new NotesDB(this);
         dbWriter=notesDB.getWritableDatabase();
 
+        initView();
+
 
     }
+//判断是添加文字还是图片还是video
+    public void initView(){
+        if (val.equals("1")){
+            //证明是添加文字
+            c_imagview.setVisibility(View.GONE);
+            c_video.setVisibility(View.GONE);
+        }
+
+        if (val.equals("2")){
+            //图片
+            c_imagview.setVisibility(View.VISIBLE);
+            c_video.setVisibility(View.GONE);
+            Intent intentImg=new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            phoneFile=new File(Environment.getExternalStorageDirectory()
+                    .getAbsoluteFile()+"/"+getTime()+".jpg");
+
+            intentImg.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(phoneFile));
+             startActivityForResult(intentImg,1);
+        }
+
+        if (val.equals("3")){
+            c_imagview.setVisibility(View.GONE);
+            c_video.setVisibility(View.VISIBLE);
+        }
+
+    }
+
 
 
     @Override
@@ -75,8 +112,10 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         ContentValues contentValues=new ContentValues();
         contentValues.put(NotesDB.CONTENT,editText.getText().toString());
         contentValues.put(NotesDB.TIME,getTime());
-        contentValues.put(NotesDB.PATH,"PATH_Test");
+//        contentValues.put(NotesDB.PATH,"PATH_Test");
+        contentValues.put(NotesDB.PATH,phoneFile+ "");
         contentValues.put(NotesDB.VIDEO,"Video_Test");
+
 
         dbWriter.insert(NotesDB.TABLE_NAME,null,contentValues);
     }
@@ -86,10 +125,19 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
 
         SimpleDateFormat format=new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
         Date curDate=new Date();
-        String string=format.format(curDate);
-        return string;
+        return format.format(curDate);
 
     }
 
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode==1){
+            Bitmap bitmap= BitmapFactory.decodeFile(phoneFile.getAbsolutePath());
+            c_imagview.setImageBitmap(bitmap);
+        }
+
+    }
 }
