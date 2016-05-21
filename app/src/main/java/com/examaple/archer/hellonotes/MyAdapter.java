@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,14 +54,15 @@ public class MyAdapter  extends BaseAdapter{
         TextView contenttv= (TextView) layout.findViewById(R.id.list_content);
         TextView timetv= (TextView) layout.findViewById(R.id.list_time);
         ImageView imageView= (ImageView) layout.findViewById(R.id.list_img);
-        ImageView  imageView1= (ImageView) layout.findViewById(R.id.list_video);
+        ImageView  videoiv= (ImageView) layout.findViewById(R.id.list_video);
 
         cursor.moveToPosition(position);
         String content=cursor.getString(cursor.getColumnIndex("content"));
         String time=cursor.getString(cursor.getColumnIndex("time"));
         String url=cursor.getString(cursor.getColumnIndex("path"));
-
+        String video=cursor.getString(cursor.getColumnIndex("video"));
         contenttv.setText(content);
+        videoiv.setImageBitmap(getVideoThumbnail(video,200,200, MediaStore.Images.Thumbnails.MICRO_KIND));
         timetv.setText(time);
         imageView.setImageBitmap(getImageThumbnail(url,200,200));
 
@@ -96,4 +98,23 @@ public class MyAdapter  extends BaseAdapter{
                 ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
         return bitmap;
     }
+
+
+    private Bitmap getVideoThumbnail(String uri,int width,int height,int kind){
+
+
+        Bitmap bitmap=null;
+        bitmap=ThumbnailUtils.createVideoThumbnail(uri,kind);
+        bitmap=ThumbnailUtils.extractThumbnail(bitmap,width,height,ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+
+
+
+
+
+        return bitmap;
+    }
+
+
+
+
 }

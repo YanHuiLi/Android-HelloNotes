@@ -35,7 +35,7 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
 
     private NotesDB notesDB;
     private SQLiteDatabase dbWriter;
-    private File phoneFile;
+    private File phoneFile,videoFile;
 
 
 
@@ -84,6 +84,13 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         if (val.equals("3")){
             c_imagview.setVisibility(View.GONE);
             c_video.setVisibility(View.VISIBLE);
+
+            Intent video=new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            videoFile=new File(Environment.getExternalStorageDirectory()
+                    .getAbsoluteFile()+"/"+getTime()+".mp4");
+
+            video.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(videoFile));
+            startActivityForResult(video,2);
         }
 
     }
@@ -114,7 +121,7 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         contentValues.put(NotesDB.TIME,getTime());
 //        contentValues.put(NotesDB.PATH,"PATH_Test");
         contentValues.put(NotesDB.PATH,phoneFile+ "");
-        contentValues.put(NotesDB.VIDEO,"Video_Test");
+        contentValues.put(NotesDB.VIDEO,videoFile+ "");
 
 
         dbWriter.insert(NotesDB.TABLE_NAME,null,contentValues);
@@ -137,6 +144,13 @@ public class AddContent extends AppCompatActivity implements View.OnClickListene
         if (requestCode==1){
             Bitmap bitmap= BitmapFactory.decodeFile(phoneFile.getAbsolutePath());
             c_imagview.setImageBitmap(bitmap);
+        }
+
+        //视频的显示
+        if (requestCode==2){
+            //加载视频
+            c_video.setVideoURI(Uri.fromFile(videoFile));
+            c_video.start();
         }
 
     }

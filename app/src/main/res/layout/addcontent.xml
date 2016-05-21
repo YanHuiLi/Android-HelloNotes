@@ -14,7 +14,7 @@
 
     <VideoView
         android:layout_width="300dp"
-        android:layout_height="500dp"
+        android:layout_height="300dp"
         android:id="@+id/c_video"
         android:visibility="gone"/>
 
